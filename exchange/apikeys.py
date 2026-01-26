@@ -1,0 +1,2 @@
+bapikey = 'yiwkuR3deQcfto5zj6BpSH8kGzAsQFL33yUz3H6UvjjvfWW2Dz441bvkwMHVFOi0'
+bsecret = 'icdR29cx3Znk9x5faamzJcdpyrVx4piJ8AWsoE4jAqbmYJWqa3Tq7SlTj34lP2Wp'

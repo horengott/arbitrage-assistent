@@ -1,11 +1,12 @@
 import asyncio
 import logging
 from aiogram import Bot, Dispatcher
+from aiogram.fsm.storage.memory import MemoryStorage
 from handlers.user import router
 
 
 bot = Bot(token='8092966537:AAEoEpxhMAqXuCWkmkZ-slnF5EHRZcRX4TY')
-dp = Dispatcher()
+dp = Dispatcher(storage=MemoryStorage())
 
 
 async def main():
