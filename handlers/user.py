@@ -48,7 +48,7 @@ async def choose_sim_token(message: Message, state: FSMContext):
 
 
 @router.callback_query(F.data.startswith("page_"))
-async def change_kb_page(callback: CallbackQuery):
+async def change_kb_token_page(callback: CallbackQuery):
     page_num = int(callback.data.split("_")[1])
     await callback.message.edit_text("Choose a token:", reply_markup=kb.get_top_tokens(page=page_num))
     await callback.answer()
@@ -62,3 +62,15 @@ async def take_token(callback: CallbackQuery, state: FSMContext):
    await callback.message.answer('Wait... ⏳')
 
 
+# real trading mode:
+
+@router.callback_query(F.data == "real_mode")
+async def initializing_real_mode(callback: CallbackQuery):
+    await callback.message.answer("📊 Real Trading Mode \n Select exchanges, log in and start trading:", reply_markup=kb.get_list_exchanges(page=0))
+
+
+@router.callback_query(F.data.startswith("page-"))
+async def change_kb_exchanges_page(callback: CallbackQuery):
+    page_num = int(callback.data.split("-")[1])
+    await callback.message.edit_text("Choose exchanges to log in:", reply_markup=kb.get_list_exchanges(page=page_num))
+    await callback.answer()
