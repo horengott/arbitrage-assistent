@@ -1,7 +1,7 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from exchange.fetcher import get_exchanges
+# from exchange.fetcher import get_exchanges
 
 # asking trading mode (real o simulation):
 
@@ -13,7 +13,7 @@ start_kb = InlineKeyboardMarkup(inline_keyboard=[
 # token pagination:
 
 TOP_TOKENS = [
-"BIC", "ETH", "USDT", "BNB",
+"BTC", "ETH", "USDT", "BNB",
 "SOL", "XRP", "USDC", "ARB", "TON", 
 "DOGE", "DOT", "TRX", "LINK", "MATIC",
 "WBTC", "SUI", "LTC", "BONK", "ВСН", "SHIB",

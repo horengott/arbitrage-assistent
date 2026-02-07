@@ -9,6 +9,8 @@ import keyboards.keyboards as kb
 
 from models.models import User
 
+from exchange.fetcher import get_arbitrage_analysis
+
 
 user = User()
 
@@ -56,10 +58,36 @@ async def change_kb_token_page(callback: CallbackQuery):
 
 @router.callback_query(F.data.endswith("/USDT"))
 async def take_token(callback: CallbackQuery, state: FSMContext):
+   
    token = callback.data
+   symbol = token.split('/')[0]
+
    user_data = await state.get_data()
-   amount = user_data.get('balance', 100)
-   await callback.message.answer('Wait... ⏳')
+   amount = float(user_data.get('balance', 100))
+
+   waiting_sticker = await callback.message.answer_sticker("CAACAgIAAxkBAAEQc41phy81g-W0BctoTROfJwsDDMZcbQACIwADKA9qFCdRJeeMIKQGOgQ")
+   loading_msg = await callback.message.answer(f"analyzing {symbol} for {amount} USDT...")
+   
+   result = await get_arbitrage_analysis(symbol, amount)
+
+   await waiting_sticker.delete()
+   
+   if result["found"]:
+        analysis = result['analysis']
+        
+        text = (
+            f"🔵 **Buy:** {result['buy_exchange'].title()} (${result['buy_price']})\n"
+            f"🟠 **Sell:** {result['sell_exchange'].title()} (${result['sell_price']})\n"
+            f"────────────────\n"
+            f"💰 **Net Profit:** {analysis['profit_pct']}% \n"
+            f"💵 **Profit (USD):** ${analysis['profit_usd']}\n"
+            f"📉 *Network Fees: ${analysis['withdraw_fee_paid']}*"
+        )
+        
+        await loading_msg.edit_text(text)
+
+   else:
+       await loading_msg.edit_text(f"⚠️ No profitable routes found for {symbol}")
 
 
 # real trading mode:
