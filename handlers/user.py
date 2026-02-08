@@ -7,12 +7,7 @@ from states.states import Simulation
 
 import keyboards.keyboards as kb
 
-from models.models import User
-
 from exchange.fetcher import get_arbitrage_analysis
-
-
-user = User()
 
 
 router = Router()
@@ -22,8 +17,8 @@ router = Router()
 
 @router.message(CommandStart())
 async def cmd_start(message: Message, state: FSMContext):
-    user.name = message.from_user.first_name
-    user.id = message.from_user.id
+    us_name = message.from_user.first_name
+    us_id = message.from_user.id
     await message.answer(f"""{message.from_user.first_name}, welcome to Arbitrage Assistent Bot! 🚀\n
 I am your professional assistant for finding and executing profitable cryptocurrency arbitrage deals between top global exchanges. I monitor prices, calculate network fees, and analyze order books in real-time to find the best spreads for you.
 \nChoose your mode to get started:""", reply_markup=kb.start_kb)
@@ -71,7 +66,7 @@ async def take_token(callback: CallbackQuery, state: FSMContext):
    result = await get_arbitrage_analysis(symbol, amount)
 
    await waiting_sticker.delete()
-   
+
    if result["found"]:
         analysis = result['analysis']
         

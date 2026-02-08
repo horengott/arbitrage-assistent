@@ -5,6 +5,7 @@ from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 from handlers.user import router
 from dotenv import load_dotenv
+from exchange.fetcher import reload_markets
 
 
 load_dotenv()
@@ -17,6 +18,7 @@ dp = Dispatcher(storage=MemoryStorage())
 
 async def main():
     dp.include_router(router)
+    await reload_markets()
     await dp.start_polling(bot)
 
 

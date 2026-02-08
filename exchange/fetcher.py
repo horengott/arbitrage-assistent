@@ -2,6 +2,9 @@ import ccxt.async_support as ccxt
 import asyncio
 import json
 
+
+# checking liquidity:
+
 def calculate_vwap(order_book_side, target_amount_usdt):
     remaining_usdt = target_amount_usdt
     total_tokens = 0
@@ -19,9 +22,12 @@ def calculate_vwap(order_book_side, target_amount_usdt):
 
     return target_amount_usdt / total_tokens if remaining_usdt == 0 else None
 
+
+# getting liquid prices:
+
 async def fetch_market_data(exchange, symbol, user_balance_usdt):
     try:
-        order_book = await exchange.fetch_order_book(symbol, limit=50)
+        order_book = await exchange.fetch_order_book(symbol, limit=20)
         buy_price = calculate_vwap(order_book['asks'], user_balance_usdt)
         sell_price = calculate_vwap(order_book['bids'], user_balance_usdt)
 
@@ -35,57 +41,88 @@ async def fetch_market_data(exchange, symbol, user_balance_usdt):
         return None
     return None
 
+
+# getting best route ignoring fees:
+
+exchange_names = [
+'binance', 'okx', 'bybit', 'gateio', 'kucoin', 'mexc',
+'huobi', 'bitget', 'coinex', 'bitfinex'
+]
+
+exchanges = [getattr(ccxt, name)({
+    'enableRateLimit': False, 
+    'timeout': 5000
+}) for name in exchange_names]
+
+
+async def reload_markets():
+    print("⏳ reloading markets...")
+    
+    tasks = [ex.load_markets() for ex in exchanges]
+    
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+    
+    loaded_count = 0
+    for ex, result in zip(exchanges, results):
+        if isinstance(result, Exception):
+            print(f"⚠️ {ex.id} failed (Timeout or Error).")
+        else:
+            loaded_count += 1
+            
+    print(f"🚀 {loaded_count}/{len(exchanges)} exchanges reloaded")
+
+
+async def close_all_exchanges():
+    await asyncio.gather(*[ex.close() for ex in exchange_names])
+
+
 async def find_best_route(token_symbol, user_balance_usdt):
     symbol = f"{token_symbol}/USDT"
-    exchange_names = ['binance', 'bybit', 'okx', 'kucoin', 'gateio']
 
-    exchanges = [getattr(ccxt, name)({
-        'enableRateLimit': True, 
-        'timeout': 5000
-    }) for name in exchange_names]
+    print(f"🔎 Fetching prices from {len(exchange_names)} exchanges for {symbol}...")
+    tasks = [fetch_market_data(ex, symbol, user_balance_usdt) for ex in exchanges]
+    results = await asyncio.gather(*tasks)
 
-    try:
-        print(f"🔎 Fetching prices from {len(exchange_names)} exchanges for {symbol}...")
-        tasks = [fetch_market_data(ex, symbol, user_balance_usdt) for ex in exchanges]
-        results = await asyncio.gather(*tasks)
+    valid_markets = [r for r in results if r is not None]
+    print(f"✅ Data retrieved from: {[m['exchange'] for m in valid_markets]}")
 
-        valid_markets = [r for r in results if r is not None]
-        print(f"✅ Data retrieved from: {[m['exchange'] for m in valid_markets]}")
+    if len(valid_markets) < 2:
+        return None, None
 
-        if len(valid_markets) < 2:
-            return None, None
+    best_spread = 0
+    best_buy_found = None
+    best_sell_found = None
 
-        best_spread = -float('inf')
-        best_buy_found = None
-        best_sell_found = None
+    for buy_mkt in valid_markets:
+        for sell_mkt in valid_markets:
+            if buy_mkt['buy_price'] >= sell_mkt['sell_price']:
+                continue
 
-        for buy_mkt in valid_markets:
-            for sell_mkt in valid_markets:
-                if buy_mkt['exchange'] == sell_mkt['exchange']:
-                    continue
+            current_spread = (sell_mkt['sell_price'] - buy_mkt['buy_price']) / buy_mkt['buy_price']
 
-                current_spread = (sell_mkt['sell_price'] - buy_mkt['buy_price']) / buy_mkt['buy_price']
+            if current_spread > best_spread:
+                best_spread = current_spread
+                best_buy_found = buy_mkt
+                best_sell_found = sell_mkt
 
-                if current_spread > best_spread:
-                    best_spread = current_spread
-                    best_buy_found = buy_mkt
-                    best_sell_found = sell_mkt
+    if best_buy_found:
+        print(f"📈 Best mathematical route: {best_buy_found['exchange']} -> {best_sell_found['exchange']} (Gross Spread: {round(best_spread*100, 3)}%)")
 
-        if best_buy_found:
-            print(f"📈 Best mathematical route: {best_buy_found['exchange']} -> {best_sell_found['exchange']} (Gross Spread: {round(best_spread*100, 3)}%)")
+    return best_buy_found, best_sell_found
 
-        return best_buy_found, best_sell_found
 
-    finally:
-        await asyncio.gather(*[exchange.close() for exchange in exchanges])
+# opening json file with fees:
 
 try:
-    with open('config_fees.json', 'r', encoding='utf-8') as f:
+    with open('exchange/config_fees.json', 'r', encoding='utf-8') as f:
         FEES_CONFIG = json.load(f)
         print("✅ Fee configuration loaded successfully.")
 except FileNotFoundError:
     FEES_CONFIG = {}
     print("⚠️ config_fees.json not found, using default values.")
+
+
+# getting best route considering fees:
 
 async def calculate_arbitrage_result(amount_usdt, buy_price, sell_price, symbol):
     base_coin = symbol.split('/')[0]
@@ -126,6 +163,7 @@ async def calculate_arbitrage_result(amount_usdt, buy_price, sell_price, symbol)
         'withdraw_fee_paid': withdraw_fee_amount,
         'coin': base_coin
     }
+
 
 async def get_arbitrage_analysis(token_symbol, amount_usdt):
     

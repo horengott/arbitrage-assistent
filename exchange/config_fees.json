@@ -4,30 +4,36 @@
     "default_taker": 0.001
   },
   "withdrawal_fees": {
-    "BTC": { "default_fee": 0.0005 },
-    "ETH": { "default_fee": 0.002 },
     "USDT": { "default_fee": 1.0 },
+    "USDC": { "default_fee": 1.0 },
+    "DAI": { "default_fee": 1.0 },
+
     "BNB": { "default_fee": 0.0005 },
     "SOL": { "default_fee": 0.01 },
     "XRP": { "default_fee": 0.25 },
-    "USDC": { "default_fee": 1.0 },
-    "ARB": { "default_fee": 0.1 },
-    "TON": { "default_fee": 0.05 },
-    "DOGE": { "default_fee": 5.0 },
-    "DOT": { "default_fee": 0.1 },
     "TRX": { "default_fee": 1.0 },
-    "LINK": { "default_fee": 0.5 },
-    "MATIC": { "default_fee": 0.1 },
-    "WBTC": { "default_fee": 0.0002 },
-    "SUI": { "default_fee": 0.02 },
+    "DOGE": { "default_fee": 5.0 },
     "LTC": { "default_fee": 0.001 },
-    "BONK": { "default_fee": 1000.0 },
-    "BCH": { "default_fee": 0.001 },
-    "SHIB": { "default_fee": 500000.0 },
     "ADA": { "default_fee": 1.0 },
     "AVAX": { "default_fee": 0.1 },
-    "UNI": { "default_fee": 0.5 },
-    "DAI": { "default_fee": 1.0 },
-    "ATOM": { "default_fee": 0.005 }
+    "DOT": { "default_fee": 0.1 },
+    "ATOM": { "default_fee": 0.005 },
+
+    "ARB": { "default_fee": 0.1 },
+    "OP": { "default_fee": 0.1 },
+    "TON": { "default_fee": 0.05 },
+
+    "SUI": { "default_fee": 0.02 },
+    "APT": { "default_fee": 0.01 },
+    "NEAR": { "default_fee": 0.01 },
+    "ALGO": { "default_fee": 0.01 },
+    "INJ": { "default_fee": 0.02 },
+    "KAS": { "default_fee": 0.01 },
+
+    "XLM": { "default_fee": 0.02 },
+
+    "BONK": { "default_fee": 1000.0 },
+    "SHIB": { "default_fee": 500000.0 },
+    "PEPE": { "default_fee": 1000000.0 }
   }
 }
