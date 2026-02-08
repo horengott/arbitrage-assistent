@@ -5,6 +5,9 @@ from aiogram.types import Message, ReplyKeyboardRemove, CallbackQuery
 from aiogram.fsm.context import FSMContext
 from states.states import Simulation
 
+from db.database import async_session
+from db.crud import save_user_history
+
 import keyboards.keyboards as kb
 
 from exchange.fetcher import get_arbitrage_analysis
@@ -28,6 +31,7 @@ I am your professional assistant for finding and executing profitable cryptocurr
 
 @router.callback_query(F.data == "simulation")
 async def deposit_sim_funds(callback: CallbackQuery, state: FSMContext):
+    await state.update_data(mode="simulation")
     await callback.message.answer("""📊 Simulation Mode
 \nPractice with virtual balance! Test your strategies and see potential profits based on real-time market data without any risk.
 \nSpecify USDT balance for simulation operate:""")
@@ -59,10 +63,25 @@ async def take_token(callback: CallbackQuery, state: FSMContext):
 
    user_data = await state.get_data()
    amount = float(user_data.get('balance', 100))
+   mode = user_data.get('mode', 'simulation')
 
    waiting_sticker = await callback.message.answer_sticker("CAACAgIAAxkBAAEQc41phy81g-W0BctoTROfJwsDDMZcbQACIwADKA9qFCdRJeeMIKQGOgQ")
    loading_msg = await callback.message.answer(f"analyzing {symbol} for {amount} USDT...")
    
+   try:
+        async with async_session() as session:
+            await save_user_history(
+                session=session,
+                telegram_id=callback.from_user.id,
+                username=callback.from_user.username,
+                first_name=callback.from_user.first_name,
+                mode=mode,
+                amount=amount,
+                token=symbol
+            )
+   except Exception as e:
+        print(f"⚠️ failed db: {e}")
+
    result = await get_arbitrage_analysis(symbol, amount)
 
    await waiting_sticker.delete()
