@@ -46,7 +46,7 @@ async def fetch_market_data(exchange, symbol, user_balance_usdt):
 
 exchange_names = [
 'binance', 'okx', 'bybit', 'gateio', 'kucoin', 'mexc',
-'huobi', 'bitget', 'coinex', 'bitfinex'
+'huobi', 'bitget', 'coinex'
 ]
 
 exchanges = [getattr(ccxt, name)({
@@ -129,38 +129,18 @@ async def calculate_arbitrage_result(amount_usdt, buy_price, sell_price, symbol)
     
     trade_fee_pct = FEES_CONFIG.get('trading_fees', {}).get('default_taker', 0.001)
     
-    coin_fees = FEES_CONFIG.get('withdrawal_fees', {}).get(base_coin)
-    
-    if coin_fees:
-        withdraw_fee_amount = coin_fees['default_fee']
-        print(f"ℹ️ Withdrawal fee detected for {base_coin}: {withdraw_fee_amount} (Network: {coin_fees.get('network', 'Unknown')})") 
-    else:
-        withdraw_fee_amount = 1.0 / buy_price
-        print(f"⚠️ Using generic withdrawal fee ($1.00)")
-
     amount_after_buy_fee = amount_usdt * (1 - trade_fee_pct)
     coins_bought = amount_after_buy_fee / buy_price
     
-    coins_arrived = coins_bought - withdraw_fee_amount
-    
-    if coins_arrived <= 0:
-        return {
-            'success': False,
-            'profit_usd': -amount_usdt,
-            'profit_pct': -100.0,
-            'withdraw_fee_paid': withdraw_fee_amount
-        }
-        
-    usdt_received = (coins_arrived * sell_price) * (1 - trade_fee_pct)
+    usdt_received = (coins_bought * sell_price) * (1 - trade_fee_pct)
     
     net_profit_usd = usdt_received - amount_usdt
     net_profit_pct = (net_profit_usd / amount_usdt) * 100
     
     return {
-        'success': True,
+        'success': net_profit_usd > 0,
         'profit_usd': round(net_profit_usd, 2),
-        'profit_pct': round(net_profit_pct, 2),
-        'withdraw_fee_paid': withdraw_fee_amount,
+        'profit_pct': round(net_profit_pct, 4),
         'coin': base_coin
     }
 

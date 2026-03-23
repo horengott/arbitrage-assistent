@@ -13,11 +13,10 @@ start_kb = InlineKeyboardMarkup(inline_keyboard=[
 # token pagination:
 
 TOP_TOKENS = [
-"USDT", "BNB",
-"SOL", "XRP", "USDC", "ARB", "TON", 
-"DOGE", "DOT", "TRX", "SUI", "LTC", "BONK", "SHIB",
-"ADA", "AVAX", "DAI", "ATOM", "XLM", "ALGO",
-"NEAR", "APT", "OP", "INJ", "KAS", "PEPE"
+    "PEPE", "WIF", "BONK", "FLOKI", "BOME", "MEME", "SHIB", "DOGE",
+    "RNDR", "FET", "WLD", "TAO", "NEAR", "INJ",
+    "SUI", "SEI", "TIA", "TON", "KAS", "APT",
+    "ARB", "OP", "ORDI", "STX", "GALA", "LINK"
 ]
 
 def get_top_tokens(page=0):
