@@ -20,7 +20,7 @@ The core engine is seamlessly integrated into a highly interactive **Telegram bo
 
 1. Clone the repository:
    ```bash
-   git clone [https://github.com/yourusername/arbitrage-assistent.git](https://github.com/yourusername/arbitrage-assistent.git)
+   git clone [https://github.com/horengott/arbitrage-assistent.git](https://github.com/horengott/arbitrage-assistent.git)
    cd arbitrage-assistent
    ```
 
