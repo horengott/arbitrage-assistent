@@ -46,16 +46,16 @@ python main.py
 Interact with the bot on Telegram following this flow:
 
 ### 1. Choose Mode
-Select the operation mode (e.g., Live Scanner, Simulation).
-![Choose Mode](docs/images/choose_mode.png)
+Select the operation mode (e.g., Real Trading, Simulation).
+![Choose Mode](docs/images/choose_mode.jpg)
 
 ### 2. Enter USDT Amount (Simulation)
 Input the amount of USDT to simulate the trade and calculate accurate slippage.
-![Enter USDT Amount](docs/images/enter_usdt.png)
+![Enter USDT Amount](docs/images/enter_usdt.jpg)
 
 ### 3. Select Token
 Choose the specific cryptocurrency to scan for arbitrage opportunities.
-![Select Token](docs/images/select_token.png)
+![Select Token](docs/images/select_token.jpg)
 
 ## Project Structure
 
