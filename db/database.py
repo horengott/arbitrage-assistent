@@ -1,7 +1,7 @@
 import os
 import asyncio
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
-from sqlalchemy import String, ForeignKey, Float, DateTime, func, BigInteger
+from sqlalchemy import String, ForeignKey, Float, DateTime, func, BigInteger, select
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from typing import List
 from datetime import datetime
@@ -67,6 +67,15 @@ async def init_db():
             print("✅ tables created")
         except:
             print("❌ db initiation failed")
+
+
+async def get_users_last_week(session):
+    one_week_ago = datetime.datetime.now() - datetime.timedelta(days=7)
+    
+    stmt = select(User).where(User.created_at >= one_week_ago)
+    
+    result = await session.execute(stmt)
+    return result.scalars().all()
 
 
 if __name__ == '__main__':
