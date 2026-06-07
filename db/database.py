@@ -64,9 +64,8 @@ async def init_db():
     async with engine.begin() as conn:
         try:
             await conn.run_sync(Base.metadata.create_all)
-            print("✅ tables created")
         except:
-            print("❌ db initiation failed")
+            print("db failed")
 
 
 async def get_users_last_week(session):

@@ -80,7 +80,7 @@ async def take_token(callback: CallbackQuery, state: FSMContext):
                 token=symbol
             )
    except Exception as e:
-        print(f"⚠️ failed db: {e}")
+        print(f"failed db: {e}")
 
    result = await get_arbitrage_analysis(symbol, amount)
 

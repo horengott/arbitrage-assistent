@@ -56,7 +56,7 @@ exchanges = [getattr(ccxt, name)({
 
 
 async def reload_markets():
-    print("⏳ reloading markets...")
+    print("reloading markets...")
     
     tasks = [ex.load_markets() for ex in exchanges]
     
@@ -65,11 +65,11 @@ async def reload_markets():
     loaded_count = 0
     for ex, result in zip(exchanges, results):
         if isinstance(result, Exception):
-            print(f"⚠️ {ex.id} failed (Timeout or Error).")
+            print(f"{ex.id} failed (Timeout or Error).")
         else:
             loaded_count += 1
             
-    print(f"🚀 {loaded_count}/{len(exchanges)} exchanges reloaded")
+    print(f"{loaded_count}/{len(exchanges)} exchanges reloaded")
 
 
 async def close_all_exchanges():
@@ -84,7 +84,7 @@ async def find_best_route(token_symbol, user_balance_usdt):
     results = await asyncio.gather(*tasks)
 
     valid_markets = [r for r in results if r is not None]
-    print(f"✅ Data retrieved from: {[m['exchange'] for m in valid_markets]}")
+    print(f"got data from: {[m['exchange'] for m in valid_markets]}")
 
     if len(valid_markets) < 2:
         return None, None
@@ -106,7 +106,7 @@ async def find_best_route(token_symbol, user_balance_usdt):
                 best_sell_found = sell_mkt
 
     if best_buy_found:
-        print(f"📈 Best mathematical route: {best_buy_found['exchange']} -> {best_sell_found['exchange']} (Gross Spread: {round(best_spread*100, 3)}%)")
+        print(f"best mathematical route: {best_buy_found['exchange']} -> {best_sell_found['exchange']} (Gross Spread: {round(best_spread*100, 3)}%)")
 
     return best_buy_found, best_sell_found
 
@@ -116,10 +116,10 @@ async def find_best_route(token_symbol, user_balance_usdt):
 try:
     with open('exchange/config_fees.json', 'r', encoding='utf-8') as f:
         FEES_CONFIG = json.load(f)
-        print("✅ Fee configuration loaded successfully.")
+        print("fee configuration loaded successfully.")
 except FileNotFoundError:
     FEES_CONFIG = {}
-    print("⚠️ config_fees.json not found, using default values.")
+    print("config_fees.json not found, using default values.")
 
 
 # getting best route considering fees:
@@ -150,7 +150,7 @@ async def get_arbitrage_analysis(token_symbol, amount_usdt):
     best_buy, best_sell = await find_best_route(token_symbol, amount_usdt)
     
     if not best_buy or not best_sell:
-        print("❌ No sufficient liquidity found.")
+        print("no sufficient liquidity")
         return {
             "found": False,
             "message": "No liquidity found"
@@ -165,10 +165,10 @@ async def get_arbitrage_analysis(token_symbol, amount_usdt):
         symbol
     )
     
-    print(f"\n📊 --- FINAL SUMMARY FOR {symbol} ---")
-    print(f"Buy: {best_buy['exchange']} @ {best_buy['buy_price']}")
-    print(f"Sell: {best_sell['exchange']} @ {best_sell['sell_price']}")
-    print(f"Profit: ${result['profit_usd']} ({result['profit_pct']}%)")
+    print(f"\n --- FINAL SUMMARY FOR {symbol} ---")
+    print(f"buy: {best_buy['exchange']} @ {best_buy['buy_price']}")
+    print(f"sell: {best_sell['exchange']} @ {best_sell['sell_price']}")
+    print(f"profit: ${result['profit_usd']} ({result['profit_pct']}%)")
     print(f"---------------------------------------\n")
 
     if result['profit_usd'] > 0:
@@ -183,5 +183,5 @@ async def get_arbitrage_analysis(token_symbol, amount_usdt):
     else:
         return {
             "found": False,
-            "message": "No profitable route found (Negative Spread)"
+            "message": "no profitable route (Negative Spread)"
         }
