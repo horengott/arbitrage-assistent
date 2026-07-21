@@ -1,5 +1,7 @@
-from db.database import User, ArbitrageHistory
+from db.models import User, ArbitrageHistory
 from sqlalchemy.ext.asyncio import AsyncSession
+from datetime import datetime, timedelta
+from sqlalchemy import select
 
 
 # saving to db user activity:
@@ -20,3 +22,12 @@ async def save_user_history(session: AsyncSession, telegram_id: int, first_name:
     
     session.add(log)
     await session.commit()
+
+
+async def get_users_last_week(session):
+    one_week_ago = datetime.datetime.now() - datetime.timedelta(days=7)
+    
+    stmt = select(User).where(User.created_at >= one_week_ago)
+    
+    result = await session.execute(stmt)
+    return result.scalars().all()
