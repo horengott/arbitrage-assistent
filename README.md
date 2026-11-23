@@ -1,9 +1,9 @@
 # Horengott Arbitrage Assistent
 
 ## Description
-**Horengott Arbitrage Assistent** is an advanced, high-speed cryptocurrency arbitrage scanner explicitly designed for **parallel arbitrage** (spatial arbitrage). This strategy assumes the user already holds asset balances across multiple exchanges, allowing for instantaneous, simultaneous buy and sell executions without the need to transfer funds between platforms. 
+**Horengott Arbitrage Assistent** is a cryptocurrency arbitrage scanner designed for **parallel arbitrage** (spatial arbitrage). This strategy assumes the user already holds asset balances across multiple exchanges, allowing for instantaneous, simultaneous buy and sell executions without the need to transfer funds between platforms. 
 
-The core engine is seamlessly integrated into a highly interactive **Telegram bot built with the `aiogram` framework**, providing real-time market data, route calculations, and spread estimations directly to the user.
+The core engine is integrated **Telegram bot built with the `aiogram` framework**, providing real-time market data, route calculations, and spread estimations directly to the user.
 
 ## Key Features
 * **Parallel Arbitrage Focus:** Optimized for distributed portfolios across multiple centralized exchanges (Binance, Bybit, OKX, KuCoin, Gate.io).
@@ -27,7 +27,7 @@ The core engine is seamlessly integrated into a highly interactive **Telegram bo
 2. Create and activate a virtual environment:
    ```bash
    python -m venv .venv
-   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   source .venv/bin/activate  # on Windows: .venv\Scripts\activate
    ```
 
 3. Install dependencies:
@@ -92,7 +92,7 @@ ARBITRAGE-ASSISTENT/
 
 ## Roadmap
 
-* **Mobile Application:** A dedicated cross-platform mobile app is planned for the `mobile_app` branch, which will be developed using **Dart and Flutter**.
+* **Mobile Application:** A dedicated cross-platform mobile app (also telegram mini app) is planned for the `mobile_app` branch, which will be developed using **Dart and Flutter**.
 * **Rust Port:** To achieve maximum execution speed and minimize latency, future versions of the core engine will be developed in **Rust**.
 
 ## Disclaimer
