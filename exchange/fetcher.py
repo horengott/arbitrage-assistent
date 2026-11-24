@@ -79,7 +79,7 @@ async def close_all_exchanges():
 async def find_best_route(token_symbol, user_balance_usdt):
     symbol = f"{token_symbol}/USDT"
 
-    print(f"🔎 Fetching prices from {len(exchange_names)} exchanges for {symbol}...")
+    print(f"fetching prices from {len(exchange_names)} exchanges for {symbol}...")
     tasks = [fetch_market_data(ex, symbol, user_balance_usdt) for ex in exchanges]
     results = await asyncio.gather(*tasks)
 
@@ -106,12 +106,12 @@ async def find_best_route(token_symbol, user_balance_usdt):
                 best_sell_found = sell_mkt
 
     if best_buy_found:
-        print(f"best mathematical route: {best_buy_found['exchange']} -> {best_sell_found['exchange']} (Gross Spread: {round(best_spread*100, 3)}%)")
+        print(f"best mathematical route: {best_buy_found['exchange']} -> {best_sell_found['exchange']} (gross Spread: {round(best_spread*100, 3)}%)")
 
     return best_buy_found, best_sell_found
 
 
-# opening json file with fees:
+# opening json with fees:
 
 try:
     with open('exchange/config_fees.json', 'r', encoding='utf-8') as f:
@@ -153,7 +153,8 @@ async def get_arbitrage_analysis(token_symbol, amount_usdt):
         print("no sufficient liquidity")
         return {
             "found": False,
-            "message": "No liquidity found"
+            "message": "no liquidity found",
+            "res": "theres no enough liquidity"
         }
     
     symbol = f"{token_symbol}/USDT"
@@ -183,5 +184,6 @@ async def get_arbitrage_analysis(token_symbol, amount_usdt):
     else:
         return {
             "found": False,
-            "message": "no profitable route (Negative Spread)"
+            "message": "no profitable route (Negative Spread)",
+            "res": f"profit: ${result['profit_usd']} ({result['profit_pct']}%)"
         }
