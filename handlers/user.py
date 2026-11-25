@@ -101,7 +101,7 @@ async def take_token(callback: CallbackQuery, state: FSMContext):
         await loading_msg.edit_text(text)
 
    else:
-       await loading_msg.edit_text(f"⚠️ No profitable routes found for {symbol} \n"
+       await loading_msg.edit_text(f"⚠️ no profitable routes found for {symbol} \n"
                                    f"\n{result['res']}")
 
 # real trading mode:
